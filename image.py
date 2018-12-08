@@ -135,8 +135,7 @@ if __name__ == '__main__':
 
     # set up logging if user wants to see log messages
     if args['log'].upper() == 'INFO':
-        logger.setLevel(logging.INFO) #, format='%(message)s')
-        # logging.basicConfig(level=logging.INFO, format='%(message)s')
+        logger.setLevel(logging.INFO)
     
     # download images
     keywords = {args['animal']: args['tags']}
