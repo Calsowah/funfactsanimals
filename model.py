@@ -17,19 +17,37 @@ BATCH_SIZE = 16      # batch size - nb samples should be divisible by this
 WIDTH, HEIGHT = 224, 224 # size to which the images will be resized - VGG16 expects 224x224
 
 # paths to directories containing training/validation images, and bottleneck features
+MODEL_PATH = path.join('models', 'model.h5')
 TRAIN_DIR = path.join('images','train') 
 VAL_DIR   = path.join('images','validation')
 TRAIN_BOTTLENECK = path.join('bottleneck', 'bottleneck_features_train.npy')
 VAL_BOTTLENECK   = path.join('bottleneck', 'bottleneck_features_val.npy')
 
-def load_vgg16():
+def parse():
+    """ Parse command line arguments given by the user.
+        USAGE:
+        python model.py --dest [path to destination h5 file]
+                        --train [path to directory containing training images]
+                        --val [path to directory containing testing images]
+        Returns: a dictionary mapping the parameter names to the values.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dest', type=str, default=MODEL_PATH, 
+                        help='path to an h5 file where model will be saved [default: ./models/model.h5]')
+    parser.add_argument('--train', type=str, default=TRAIN_DIR, 
+                        help='path to the directory containing training images [default: ./images/train')
+    parser.add_argument('--val', type=str, default=VAL_DIR, 
+                        help='path to directory containing validation images [default: ./images/validation')
+    return vars(parser.parse_args())
+
+def load_vgg16(train_dir, val_dir):
     datagen = ImageDataGenerator(rescale=1./255)
     
     # build VGG16 network and save bottleneck features 
     # for training & validation sets
     model = applications.VGG16(include_top=False, weights='imagenet')
     train_gen = datagen.flow_from_directory(
-        TRAIN_DIR,
+        train_dir,
         target_size=(WIDTH, HEIGHT),
         batch_size=BATCH_SIZE,
         class_mode=None,
@@ -41,7 +59,7 @@ def load_vgg16():
     np.save(open(TRAIN_BOTTLENECK, 'wb'), bottleneck_features_train)
 
     validation_gen = datagen.flow_from_directory(
-        VAL_DIR,
+        val_dir,
         target_size=(WIDTH, HEIGHT),
         batch_size=BATCH_SIZE,
         class_mode=None,
@@ -88,13 +106,8 @@ def train(dest):
     model.save(dest)
 
 if __name__ == '__main__':
-    # parse CL arguments for where to save model
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--dest', type=str, required=True, 
-                        help='path to an h5 file [where model will be saved]')
-    dest = vars(parser.parse_args())['dest']
-
-    load_vgg16()
-    train(dest)
+    args = parse()
+    load_vgg16(args['train'], args['val'])
+    train(args['dest'])
 
 
