@@ -37,7 +37,7 @@ for filename in os.listdir(sys.argv[1]):
             response = client.upload(img, obj)
 
             # get thumbnail url from imagekitio and add transformation
-            url_thumb = (re.sub('/tr:n-media_library_thumbnail/', '/tr:h-50,w-50,fo-auto/', str(response.get("thumbnail"))))
+            url_thumb = (re.sub('/tr:n-media_library_thumbnail/', '/tr:h-224,w-224,fo-auto/', str(response.get("thumbnail"))))
             # upload image via imagekitio url to dest folder
             result = urllib.request.urlretrieve(url_thumb, os.path.join(sys.argv[2], sys.argv[3] + str(i) + ".jpg"))
             print("saved image to " + sys.argv[2] + "/" + sys.argv[3] + str(i) + ".jpg")
