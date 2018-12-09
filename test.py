@@ -7,6 +7,7 @@ import numpy as np
 ###### TODO make this not jank : - )
 BEAR_TEST_SAMPLES = 110
 FLAMINGO_TEST_SAMPLES = 110
+FOX_TEST_SAMPLES = 110
 IMG_WIDTH, IMG_HEIGHT = 224, 224
 BATCH_SIZE = 10
 
@@ -30,7 +31,8 @@ preds = model.predict(test_data, batch_size=BATCH_SIZE).astype(int).flatten()
 
 y = np.array( 
     [0] * BEAR_TEST_SAMPLES + 
-    [1] * FLAMINGO_TEST_SAMPLES
+    [1] * FLAMINGO_TEST_SAMPLES +
+    [2] * FOX_TEST_SAMPLES
 )
 
 # sketchy tester thing

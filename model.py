@@ -4,14 +4,15 @@ from keras.models import Sequential
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Conv2D, MaxPooling2D
+from keras.utils.np_utils import to_categorical
 from os import path
 import numpy as np
 import argparse
 
 ### CONSTANTS ###
-TRAIN_SAMPLES = 4000 # total number of training samples across all classes
-VAL_SAMPLES = 400    # total number of validation samples across all classes
-NB_CLASSES = 2       # number of classes
+TRAIN_SAMPLES = 6000 # total number of training samples across all classes
+VAL_SAMPLES = 600    # total number of validation samples across all classes
+NB_CLASSES = 3       # number of classes
 EPOCHS = 50          # number of epochs
 BATCH_SIZE = 16      # batch size - nb samples should be divisible by this
 WIDTH, HEIGHT = 224, 224 # size to which the images will be resized - VGG16 expects 224x224
@@ -75,26 +76,30 @@ def train(dest):
     train_data = np.load(open(TRAIN_BOTTLENECK, 'rb'))
     val_data = np.load(open(VAL_BOTTLENECK, 'rb'))
 
-    # generate labels for training and testing set
+    # generate labels for training and testing set, and convert to one-hot encoding
     # this assumes that each class has an equal number of training/validation samples
     train_labels = np.array( 
         [0] * (int(TRAIN_SAMPLES / NB_CLASSES)) + 
-        [1] * (int(TRAIN_SAMPLES / NB_CLASSES))
+        [1] * (int(TRAIN_SAMPLES / NB_CLASSES)) +
+        [2] * (int(TRAIN_SAMPLES / NB_CLASSES))
     )
+    train_labels = to_categorical(train_labels, num_classes=NB_CLASSES)
     val_labels = np.array(
         [0] * (int(VAL_SAMPLES / NB_CLASSES)) +
-        [1] * (int(VAL_SAMPLES / NB_CLASSES))
+        [1] * (int(VAL_SAMPLES / NB_CLASSES)) +
+        [2] * (int(VAL_SAMPLES / NB_CLASSES))
     )
+    val_labels = to_categorical(val_labels, num_classes=NB_CLASSES)
 
     # build model on top and train
     model = Sequential()
     model.add(Flatten(input_shape=train_data.shape[1:]))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(3, activation='sigmoid')) # sigmoid? softmax?
 
     model.compile(optimizer='rmsprop',
-                  loss='binary_crossentropy', 
+                  loss='categorical_crossentropy', 
                   metrics=['accuracy'])
 
     model.fit(train_data, train_labels,
