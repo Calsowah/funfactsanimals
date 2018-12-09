@@ -2,6 +2,7 @@ from keras import applications
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from keras.applications.vgg16 import preprocess_input, VGG16, decode_predictions
+from keras.utils.np_utils import to_categorical
 import numpy as np
 
 ###### TODO make this not jank : - )
@@ -21,19 +22,19 @@ test_gen = datagen.flow_from_directory(
     shuffle=False
 )
 bottleneck_features_test = model.predict_generator(test_gen,
-                            (BEAR_TEST_SAMPLES+FLAMINGO_TEST_SAMPLES) // BATCH_SIZE)
+                            (BEAR_TEST_SAMPLES+FLAMINGO_TEST_SAMPLES+FOX_TEST_SAMPLES) // BATCH_SIZE)
 np.save(open('bottleneck/bottleneck_features_test.npy', 'wb'), 
         bottleneck_features_test)
 
 test_data = np.load(open('bottleneck/bottleneck_features_test.npy', 'rb'))
-model = load_model('models/flamingobear.h5')
-preds = model.predict(test_data, batch_size=BATCH_SIZE).astype(int).flatten()
+model = load_model('models/threeclass_test.h5')
+preds = model.predict(test_data, batch_size=BATCH_SIZE).astype(int)
 
 y = np.array( 
     [0] * BEAR_TEST_SAMPLES + 
     [1] * FLAMINGO_TEST_SAMPLES +
     [2] * FOX_TEST_SAMPLES
 )
-
+y = to_categorical(y, num_classes=3)
 # sketchy tester thing
 print(float((preds != y).sum()) / preds.size)

@@ -85,7 +85,6 @@ def train(dest):
         [2] * (int(TRAIN_SAMPLES / NB_CLASSES))
     )
     train_labels = to_categorical(train_labels, num_classes=NB_CLASSES)
-    print(train_labels.shape)
     val_labels = np.array(
         [0] * (int(VAL_SAMPLES / NB_CLASSES)) +
         [1] * (int(VAL_SAMPLES / NB_CLASSES)) +
@@ -98,7 +97,7 @@ def train(dest):
     model.add(Flatten(input_shape=train_data.shape[1:]))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(3, activation='sigmoid')) # sigmoid? softmax?
+    model.add(Dense(3, activation='softmax')) # sigmoid? softmax?
 
     model.compile(optimizer='rmsprop',
                   loss='categorical_crossentropy', 
