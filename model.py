@@ -14,7 +14,7 @@ TRAIN_SAMPLES = 6000 # total number of training samples across all classes
 VAL_SAMPLES = 600    # total number of validation samples across all classes
 NB_CLASSES = 3       # number of classes
 EPOCHS = 50          # number of epochs
-BATCH_SIZE = 16      # batch size - nb samples should be divisible by this
+BATCH_SIZE = 24      # batch size - nb samples should be divisible by this
 WIDTH, HEIGHT = 224, 224 # size to which the images will be resized - VGG16 expects 224x224
 
 # paths to directories containing training/validation images, and bottleneck features
@@ -85,6 +85,7 @@ def train(dest):
         [2] * (int(TRAIN_SAMPLES / NB_CLASSES))
     )
     train_labels = to_categorical(train_labels, num_classes=NB_CLASSES)
+    print(train_labels.shape)
     val_labels = np.array(
         [0] * (int(VAL_SAMPLES / NB_CLASSES)) +
         [1] * (int(VAL_SAMPLES / NB_CLASSES)) +
