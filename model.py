@@ -78,6 +78,7 @@ def train(dest):
 
     # generate labels for training and testing set, and convert to one-hot encoding
     # this assumes that each class has an equal number of training/validation samples
+    # TODO: make this automatic based on nb of classes
     train_labels = np.array( 
         [0] * (int(TRAIN_SAMPLES / NB_CLASSES)) + 
         [1] * (int(TRAIN_SAMPLES / NB_CLASSES)) +
