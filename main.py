@@ -7,6 +7,7 @@ import numpy as np
 ### CONSTANTS
 IMG_WIDTH, IMG_HEIGHT = 224, 224      # size that input image will be resized to
 ANIMALS = ['bear', 'flamingo', 'fox'] # all possible animals (alphabetical order)
+BATCH_SIZE = 1
 
 ### Initialize models
 vgg16_model = applications.VGG16(include_top=False, weights='imagenet')
@@ -23,7 +24,7 @@ def classify(img):
     np_img = np_img.reshape((1,) + np_img.shape) # (1, 224, 224, 3)
     datagen = ImageDataGenerator(rescale=1./255).flow(
                 np_img, 
-                batch_size=1
+                batch_size=BATCH_SIZE
     )
 
     # make prediction
