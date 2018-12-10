@@ -1,19 +1,18 @@
 from keras import applications 
 from keras.models import load_model
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
-from keras.applications.vgg16 import preprocess_input, VGG16, decode_predictions
+from keras.preprocessing.image import ImageDataGenerator
+from keras.applications.vgg16 import VGG16
 from keras.utils.np_utils import to_categorical
 import numpy as np
 
-###### TODO make this not jank : - )
-BEAR_TEST_SAMPLES = 110
-FLAMINGO_TEST_SAMPLES = 110
-FOX_TEST_SAMPLES = 110
+TEST_MODEL = 'models/threeclass_test.h5' # path to the model being tested
+TEST_SAMPLES = 330 # total number of test samples across all classes
+NB_CLASSES = 3     # total number of classes
 IMG_WIDTH, IMG_HEIGHT = 224, 224
 BATCH_SIZE = 10
 
 datagen = ImageDataGenerator(rescale=1./255)
-model = applications.VGG16(include_top=False, weights='imagenet')
+vgg16_model = applications.VGG16(include_top=False, weights='imagenet')
 test_gen = datagen.flow_from_directory(
     'images/test',
     target_size=(IMG_WIDTH, IMG_HEIGHT),
@@ -21,20 +20,15 @@ test_gen = datagen.flow_from_directory(
     class_mode=None,
     shuffle=False
 )
-bottleneck_features_test = model.predict_generator(test_gen,
-                            (BEAR_TEST_SAMPLES+FLAMINGO_TEST_SAMPLES+FOX_TEST_SAMPLES) // BATCH_SIZE)
-np.save(open('bottleneck/bottleneck_features_test.npy', 'wb'), 
-        bottleneck_features_test)
+bottleneck_features_test = vgg16_model.predict_generator(test_gen,
+                            TEST_SAMPLES // BATCH_SIZE)
+model = load_model(TEST_MODEL)
+preds = model.predict(bottleneck_features_test, batch_size=BATCH_SIZE).astype(int)
 
-test_data = np.load(open('bottleneck/bottleneck_features_test.npy', 'rb'))
-model = load_model('models/threeclass_test.h5')
-preds = model.predict(test_data, batch_size=BATCH_SIZE).astype(int)
-
-y = np.array( 
-    [0] * BEAR_TEST_SAMPLES + 
-    [1] * FLAMINGO_TEST_SAMPLES +
-    [2] * FOX_TEST_SAMPLES
-)
+# generate actual labels & convert to one-hot encoding
+y = np.concatenate([[i] * int(TEST_SAMPLES / NB_CLASSES) 
+                    for i in range(NB_CLASSES)])
 y = to_categorical(y, num_classes=3)
-# sketchy tester thing
+
+# print the test error
 print(float((preds != y).sum()) / preds.size)
