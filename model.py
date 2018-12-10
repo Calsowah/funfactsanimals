@@ -10,12 +10,12 @@ import numpy as np
 import argparse
 
 ### CONSTANTS ###
-TRAIN_SAMPLES = 6000 # total number of training samples across all classes
-VAL_SAMPLES = 600    # total number of validation samples across all classes
-NB_CLASSES = 3       # number of classes
+NB_CLASSES = 6       # number of classes
 EPOCHS = 50          # number of epochs
 BATCH_SIZE = 24      # batch size - nb samples should be divisible by this
 WIDTH, HEIGHT = 224, 224 # size to which the images will be resized - VGG16 expects 224x224
+TRAIN_SAMPLES = NB_CLASSES*2000 # total number of training samples across all classes
+VAL_SAMPLES = NB_CLASSES*200    # total number of validation samples across all classes
 
 # paths to directories containing training/validation images, and bottleneck features
 MODEL_PATH = path.join('models', 'model.h5')
