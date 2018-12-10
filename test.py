@@ -5,9 +5,9 @@ from keras.applications.vgg16 import VGG16
 from keras.utils.np_utils import to_categorical
 import numpy as np
 
-TEST_MODEL = 'models/threeclass_test.h5' # path to the model being tested
+TEST_MODEL = 'models/sixclass.h5' # path to the model being tested
 # bear, flamingo, fox, giraffe, birdofred, zebra
-TEST_SAMPLES = [110, 110, 110, 37, 45, 110]
+TEST_SAMPLES = [110, 110, 110, 40, 110, 110]
 NB_CLASSES = len(TEST_SAMPLES)     # total number of classes
 IMG_WIDTH, IMG_HEIGHT = 224, 224
 BATCH_SIZE = 10
@@ -22,13 +22,13 @@ test_gen = datagen.flow_from_directory(
     shuffle=False
 )
 bottleneck_features_test = vgg16_model.predict_generator(test_gen,
-                            TEST_SAMPLES // BATCH_SIZE)
+                            sum(TEST_SAMPLES) // BATCH_SIZE)
 model = load_model(TEST_MODEL)
 preds = model.predict(bottleneck_features_test, batch_size=BATCH_SIZE).astype(int)
 
 # generate actual labels & convert to one-hot encoding
 y = np.concatenate([[i] * TEST_SAMPLES[i] for i in range(NB_CLASSES)])
-y = to_categorical(y, num_classes=3)
+y = to_categorical(y, num_classes=NB_CLASSES)
 
 # print the test error
-print(float((preds != y).sum()) / preds.size)
+print(float((preds != y).sum()) / sum(TEST_SAMPLES))
