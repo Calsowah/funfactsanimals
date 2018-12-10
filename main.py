@@ -36,10 +36,3 @@ def classify(img):
     bottleneck_features_web = vgg16_model.predict_generator(datagen, BATCH_SIZE)
     prediction = model.predict_classes(bottleneck_features_web, batch_size=BATCH_SIZE)[0]
     return ANIMALS[prediction]
-
-if __name__ == '__main__':
-    print(classify('images/extra/flamingo/flamingo2207.jpg'))
-    print(classify('images/extra/fox/fox3413.jpg'))
-    print(classify('images/extra/zebra/zebra2490.jpg'))
-    print(classify('images/extra/red winged blackbird/birdofred211.jpg'))
-    print(classify('images/extra/giraffe/cc_Giraffes_16x9.jpg'))
