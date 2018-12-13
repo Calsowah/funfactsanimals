@@ -11,6 +11,7 @@ import base64
 import re
 import sys
 import requests
+import json
 
 ### CONSTANTS
 IMG_WIDTH, IMG_HEIGHT = 224, 224      # size that input image will be resized to
@@ -58,10 +59,11 @@ def classify(img):
     prediction = model.predict_classes(bottleneck_features_web, batch_size=BATCH_SIZE)[0]
     animal = ANIMALS[prediction]
     fun_fact = getFunFacts(animal)
-    article = "an " if fun_fact[0].lower() in ['a','e','i','o','u'] else "a "
-    text = "This is " + article + animal + "!\nDid you know? \n" + fun_fact + "\n\n"
-    print(text) # idk if we want to remove this
-    return text
+    # article = "an " if fun_fact[0].lower() in ['a','e','i','o','u'] else "a "
+    # text = "This is " + article + animal + "!\nDid you know? \n" + fun_fact + "\n\n"
+    # print(text) # idk if we want to remove this
+
+    return json.dumps({'result': prediction, 'fun': fun_fact})
 
 if __name__ == '__main__':
     classify('DEMOIMAGES/flamingo.jpg')

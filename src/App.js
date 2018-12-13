@@ -35,7 +35,7 @@ class App extends Component {
    if (this.state.imageProcessing) { 
     await axios.get(`http://127.0.0.1:5000/processPic/${this.state.selectedImage}`)
    .then((res) => {
-              this.setState({inspectionResult: res}, function (){console.log("yay")})})
+              this.setState({inspectionResult: res.result, funFact: res.fun}, function (){console.log("yay")})})
     .catch((e)=> {
       console.log("Oops")
     })           

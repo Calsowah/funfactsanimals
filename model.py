@@ -112,7 +112,7 @@ def train(dest):
 
 if __name__ == '__main__':
     args = parse()
-    load_vgg16(args['train'], args['val'])
+    # load_vgg16(args['train'], args['val'])
     train(args['dest'])
 
 
