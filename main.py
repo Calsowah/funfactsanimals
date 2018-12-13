@@ -4,15 +4,20 @@ from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 import numpy as np
 
-### CONSTANTS
-IMG_WIDTH, IMG_HEIGHT = 224, 224      # size that input image will be resized to
-# all possible animals (alphabetical order)
+
 ANIMALS = ['bear', 'flamingo', 'fox', 'giraffe', 'red winged blackbird', 'zebra']
 BATCH_SIZE = 1
+
+### CONSTANTS
+IMG_WIDTH = 224
+IMG_HEIGHT = 224      # size that input image will be resized to
+# all possible animals (alphabetical order)
 
 ### Initialize models
 vgg16_model = applications.VGG16(include_top=False, weights='imagenet')
 model = load_model('models/sixclass.h5') # TODO change this to our final trained model
+
+
 
 def classify(img):
     """ Classify a single input image.
@@ -36,3 +41,5 @@ def classify(img):
     bottleneck_features_web = vgg16_model.predict_generator(datagen, BATCH_SIZE)
     prediction = model.predict_classes(bottleneck_features_web, batch_size=BATCH_SIZE)[0]
     return ANIMALS[prediction]
+
+
