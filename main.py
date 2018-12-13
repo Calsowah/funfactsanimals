@@ -3,11 +3,13 @@ from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 from imagekitio.client import Imagekit
 from six.moves import urllib
+from funFactScraper import getFunFacts
+from PIL import Image
+import numpy as np
 import os
 import base64
 import re
 import sys
-from PIL import Image
 import requests
 
 ### CONSTANTS
@@ -34,37 +36,19 @@ model = load_model('models/model_adam.h5') # TODO change this to our final train
 
 def classify(img):
     """ Classify a single input image.
+        Prints the classification output and a fun fact to the console.
     
         img: relative path to a jpg image to classify [string]
-        returns: the predicted animal name [string]
+        returns: the predicted animal name [string], fun fact about the animal
     """
     # possible TODO: call the imagekit script on the input image
-    '''img = load_img(img, target_size=(IMG_WIDTH, IMG_HEIGHT))
+    img = load_img(img, target_size=(IMG_WIDTH, IMG_HEIGHT))
     np_img = img_to_array(img) # (224, 224, 3)
     np_img = np_img.reshape((1,) + np_img.shape) # (1, 224, 224, 3)
     datagen = ImageDataGenerator(rescale=1./255).flow(
                 np_img, 
                 batch_size=BATCH_SIZE
-    )'''
-
-    with open(img, "rb") as image_file:
-        img = base64.b64encode(image_file.read())
-        obj = {
-            "filename": "test_img.jpg",
-            "folder": "/"
-        }
-        # upload to imagekitio
-        response = client.upload(img, obj)
-    
-        # get thumbnail url from imagekitio and add transformation
-        url_thumb = (re.sub('/tr:n-media_library_thumbnail/', '/tr:h-224,w-224,fo-auto/', str(response.get("thumbnail"))))
-        response = requests.get(url_thumb)
-        np_img = np.array(Image.open(StringIO(response.content))) # (224, 224, 3)
-        np_img = np_img.reshape((1,) + np_img.shape) # (1, 224, 224, 3)
-        datagen = ImageDataGenerator(rescale=1./255).flow(
-                    np_img, 
-                    batch_size=BATCH_SIZE
-        )
+    )
         
     # make prediction
     # predict_classes will return the label, which is an integer (0, 1, 2... for
@@ -72,4 +56,12 @@ def classify(img):
     # convert this to a string name, then return
     bottleneck_features_web = vgg16_model.predict_generator(datagen, BATCH_SIZE)
     prediction = model.predict_classes(bottleneck_features_web, batch_size=BATCH_SIZE)[0]
-    return ANIMALS[prediction]
+    animal = ANIMALS[prediction]
+    fun_fact = getFunFacts(animal)
+    article = "an " if fun_fact[0].lower() in ['a','e','i','o','u'] else "a "
+    text = "This is " + article + animal + "!\n\nDid you know? \n" + fun_fact
+    print(text) # idk if we want to remove this
+    return text
+
+if __name__ == '__main__':
+    classify('images/extra/flamingo/FLAMING.jpg')

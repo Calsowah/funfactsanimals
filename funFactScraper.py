@@ -31,7 +31,7 @@ def getFunFacts(funFactSubject):
         funFactStartIndex = snippet.find(FUN_FACT_DELIMITER)
         funFactEndIndex = snippet.find('.', funFactStartIndex, -1)
         currentFunFact = snippet[funFactStartIndex + len(FUN_FACT_DELIMITER):funFactEndIndex].strip()
-        print (snippet[funFactStartIndex + len(FUN_FACT_DELIMITER):funFactEndIndex].strip())
+        # print (snippet[funFactStartIndex + len(FUN_FACT_DELIMITER):funFactEndIndex].strip())
 
         #return first fun fact if exists
         if currentFunFact != '':
@@ -80,7 +80,7 @@ def scrapeForFunFacts(soup, searchTerm):
             currentFunFact = ' '.join(result)
             #check if it's actually a fun fact with the search subject and return if it is
             if currentFunFact != '' and (searchTerm.lower() in currentFunFact.lower()):
-                print(currentFunFact.strip())
+                # print(currentFunFact.strip())
                 return currentFunFact.strip()
 
     return ''
