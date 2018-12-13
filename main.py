@@ -42,7 +42,6 @@ def classify(img):
         img: relative path to a jpg image to classify [string]
         returns: the predicted animal name [string], fun fact about the animal
     """
-    # possible TODO: call the imagekit script on the input image
     img = load_img(img, target_size=(IMG_WIDTH, IMG_HEIGHT))
     np_img = img_to_array(img) # (224, 224, 3)
     np_img = np_img.reshape((1,) + np_img.shape) # (1, 224, 224, 3)
@@ -59,11 +58,10 @@ def classify(img):
     prediction = model.predict_classes(bottleneck_features_web, batch_size=BATCH_SIZE)[0]
     animal = ANIMALS[prediction]
     fun_fact = getFunFacts(animal)
-    # article = "an " if fun_fact[0].lower() in ['a','e','i','o','u'] else "a "
-    # text = "This is " + article + animal + "!\nDid you know? \n" + fun_fact + "\n\n"
-    # print(text) # idk if we want to remove this
 
-    return json.dumps({'result': prediction, 'fun': fun_fact})
+    article = "an " if fun_fact[0].lower() in ['a','e','i','o','u'] else "a "
+    text = "This is " + article + animal + "!\nDid you know? \n" + fun_fact + "\n\n"
+    return text
 
 if __name__ == '__main__':
     classify('DEMOIMAGES/flamingo.jpg')
