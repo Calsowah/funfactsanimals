@@ -59,9 +59,15 @@ def classify(img):
     animal = ANIMALS[prediction]
     fun_fact = getFunFacts(animal)
     article = "an " if fun_fact[0].lower() in ['a','e','i','o','u'] else "a "
-    text = "This is " + article + animal + "!\n\nDid you know? \n" + fun_fact
+    text = "This is " + article + animal + "!\nDid you know? \n" + fun_fact + "\n\n"
     print(text) # idk if we want to remove this
     return text
 
 if __name__ == '__main__':
-    classify('images/extra/flamingo/FLAMING.jpg')
+    classify('DEMOIMAGES/flamingo.jpg')
+    classify('DEMOIMAGES/fox.jpg')
+    classify('DEMOIMAGES/giraffe.jpg')
+    classify('DEMOIMAGES/rwblackbird.jpg')
+    classify('DEMOIMAGES/zebra.jpg')
+
+
