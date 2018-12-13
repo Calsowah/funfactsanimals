@@ -1,24 +1,26 @@
 from keras import applications 
-from keras import optimizers 
 from keras.models import Sequential
-from keras.layers import Activation, Dropout, Flatten, Dense
+from keras.layers import Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Conv2D, MaxPooling2D
 from keras.utils.np_utils import to_categorical
+from keras import regularizers
 from os import path
+from keras.callbacks import TensorBoard
+from time import time
 import numpy as np
 import argparse
 
 ### CONSTANTS ###
 NB_CLASSES = 6       # number of classes
 EPOCHS = 50          # number of epochs
-BATCH_SIZE = 24      # batch size - nb samples should be divisible by this
+BATCH_SIZE = 48      # batch size - nb samples should be divisible by this
 WIDTH, HEIGHT = 224, 224 # size to which the images will be resized - VGG16 expects 224x224
 TRAIN_SAMPLES = NB_CLASSES*2000 # total number of training samples across all classes
 VAL_SAMPLES = NB_CLASSES*200    # total number of validation samples across all classes
 
 # paths to directories containing training/validation images, and bottleneck features
-MODEL_PATH = path.join('models', 'model.h5')
+MODEL_PATH = path.join('models', 'model_adam.h5')
 TRAIN_DIR = path.join('images','train') 
 VAL_DIR   = path.join('images','validation')
 TRAIN_BOTTLENECK = path.join('bottleneck', 'bottleneck_features_train.npy')
@@ -72,6 +74,9 @@ def load_vgg16(train_dir, val_dir):
     np.save(open(VAL_BOTTLENECK, 'wb'), bottleneck_features_val)
 
 def train(dest):
+    # intialize tensorboard to track training progress
+    tensorboard = TensorBoard(log_dir="logs/{}".format(time()))
+
     # load bottleneck features
     train_data = np.load(open(TRAIN_BOTTLENECK, 'rb'))
     val_data = np.load(open(VAL_BOTTLENECK, 'rb'))
@@ -88,11 +93,11 @@ def train(dest):
     # build model on top and train
     model = Sequential()
     model.add(Flatten(input_shape=train_data.shape[1:]))
-    model.add(Dense(256, activation='relu'))
-    model.add(Dropout(0.5))
+    model.add(Dense(256, activation='relu'))#, activity_regularizer=regularizers.l2(0.001)))
+    model.add(Dropout(0.50))
     model.add(Dense(NB_CLASSES, activation='softmax'))
 
-    model.compile(optimizer='rmsprop',
+    model.compile(optimizer='adam',#'rmsprop',
                   loss='categorical_crossentropy', 
                   metrics=['accuracy'])
 
@@ -100,7 +105,8 @@ def train(dest):
               epochs=EPOCHS,
               batch_size=BATCH_SIZE,
               validation_data=(val_data, val_labels),
-              shuffle=True)
+              shuffle=True,
+              callbacks=[tensorboard])
 
     model.save(dest)
 

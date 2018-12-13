@@ -1,7 +1,6 @@
 from os import path
 import flickrapi
 import urllib.request
-import sys
 import argparse
 import logging
 

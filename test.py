@@ -5,7 +5,7 @@ from keras.applications.vgg16 import VGG16
 from keras.utils.np_utils import to_categorical
 import numpy as np
 
-TEST_MODEL = 'models/sixclass.h5' # path to the model being tested
+TEST_MODEL = 'models/model_adam.h5' # path to the model being tested
 # bear, flamingo, fox, giraffe, birdofred, zebra
 TEST_SAMPLES = [110, 110, 110, 40, 110, 110]
 NB_CLASSES = len(TEST_SAMPLES)     # total number of classes
