@@ -1,5 +1,6 @@
 import React from "react";
 
+/** Dynamic component that responds to clicking to get an image and clicking to process it*/
 const Form = props => (
 	<form >
         <label className="custom-file-upload">

@@ -1,21 +1,21 @@
 #to run:
 #      main_flask.py run 
-# from main import classify //having errors with importing other libraries from main
-import funFactScraper 
 from main import classify
-from flask import Flask
+from flask import Flask, request, jsonify
 app = Flask (__name__)
 
 
 @app.route("/")
 def index():
-    return "Welcome" #test
+    return jsonify ({"result":"Welcome"}) #test
 
-@app.route("/processPic/<pic>")
-def processPic(pic):
+@app.route("/processPic/", methods=['GET','POST'])
+def processPic():
+    picbase64 = request.get_json()["picbase64"]
+    commaIndex = picbase64.find(",")
+    pic = picbase64[(commaIndex+1):]
     result = classify(pic)
-    # scrape using result
-    return result #should be return json with fields result and fun 
+    return result
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=3001, debug=True)
