@@ -13,6 +13,6 @@ OR
    - fox
    - giraffe
    - blackbird
-   - zebra
-Once the image is detected, the name of the animal along with a fun fact about the animal would be displayed on the page.
+   - zebra<br />
+Once the image is detected, the name of the animal along with a fun fact about the animal would be displayed on the page.<br />
 NB: If it takes too long the first time, simply click process multiple times and wait a little.
