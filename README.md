@@ -1,4 +1,5 @@
 # funfactsanimals
+CS 4701 Project
 Execute as follows:
 1. run two cmd shells
 2. a. npm install
